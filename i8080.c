@@ -322,7 +322,7 @@ static void i8080_retrieve_flags(void) {
 
 static int i8080_execute(int opcode) {
     int cpu_cycles = 0;
-    
+
     switch (opcode) {
         case 0x00:            /* nop */
         // Undocumented NOP.
@@ -650,75 +650,10 @@ static int i8080_execute(int opcode) {
             PC--;
             break;
 
-        case 0x80:            /* add b */
-            cpu_cycles = 4;
-            ADD(B);
-            break;
-
-        case 0x81:            /* add c */
-            cpu_cycles = 4;
-            ADD(C);
-            break;
-
-        case 0x82:            /* add d */
-            cpu_cycles = 4;
-            ADD(D);
-            break;
-
-        case 0x83:            /* add e */
-            cpu_cycles = 4;
-            ADD(E);
-            break;
-
-        case 0x84:            /* add h */
-            cpu_cycles = 4;
-            ADD(H);
-            break;
-
-        case 0x85:            /* add l */
-            cpu_cycles = 4;
-            ADD(L);
-            break;
-
         case 0x86:            /* add m */
             cpu_cycles = 7;
             work8 = RD_BYTE(HL);
             ADD(work8);
-            break;
-
-        case 0x87:            /* add a */
-            cpu_cycles = 4;
-            ADD(A);
-            break;
-
-        case 0x88:            /* adc b */
-            cpu_cycles = 4;
-            ADC(B);
-            break;
-
-        case 0x89:            /* adc c */
-            cpu_cycles = 4;
-            ADC(C);
-            break;
-
-        case 0x8A:            /* adc d */
-            cpu_cycles = 4;
-            ADC(D);
-            break;
-
-        case 0x8B:            /* adc e */
-            cpu_cycles = 4;
-            ADC(E);
-            break;
-
-        case 0x8C:            /* adc h */
-            cpu_cycles = 4;
-            ADC(H);
-            break;
-
-        case 0x8D:            /* adc l */
-            cpu_cycles = 4;
-            ADC(L);
             break;
 
         case 0x8E:            /* adc m */
@@ -727,80 +662,10 @@ static int i8080_execute(int opcode) {
             ADC(work8);
             break;
 
-        case 0x8F:            /* adc a */
-            cpu_cycles = 4;
-            ADC(A);
-            break;
-
-        case 0x90:            /* sub b */
-            cpu_cycles = 4;
-            SUB(B);
-            break;
-
-        case 0x91:            /* sub c */
-            cpu_cycles = 4;
-            SUB(C);
-            break;
-
-        case 0x92:            /* sub d */
-            cpu_cycles = 4;
-            SUB(D);
-            break;
-
-        case 0x93:            /* sub e */
-            cpu_cycles = 4;
-            SUB(E);
-            break;
-
-        case 0x94:            /* sub h */
-            cpu_cycles = 4;
-            SUB(H);
-            break;
-
-        case 0x95:            /* sub l */
-            cpu_cycles = 4;
-            SUB(L);
-            break;
-
         case 0x96:            /* sub m */
             cpu_cycles = 7;
             work8 = RD_BYTE(HL);
             SUB(work8);
-            break;
-
-        case 0x97:            /* sub a */
-            cpu_cycles = 4;
-            SUB(A);
-            break;
-
-        case 0x98:            /* sbb b */
-            cpu_cycles = 4;
-            SBB(B);
-            break;
-
-        case 0x99:            /* sbb c */
-            cpu_cycles = 4;
-            SBB(C);
-            break;
-
-        case 0x9A:            /* sbb d */
-            cpu_cycles = 4;
-            SBB(D);
-            break;
-
-        case 0x9B:            /* sbb e */
-            cpu_cycles = 4;
-            SBB(E);
-            break;
-
-        case 0x9C:            /* sbb h */
-            cpu_cycles = 4;
-            SBB(H);
-            break;
-
-        case 0x9D:            /* sbb l */
-            cpu_cycles = 4;
-            SBB(L);
             break;
 
         case 0x9E:            /* sbb m */
@@ -809,80 +674,10 @@ static int i8080_execute(int opcode) {
             SBB(work8);
             break;
 
-        case 0x9F:            /* sbb a */
-            cpu_cycles = 4;
-            SBB(A);
-            break;
-
-        case 0xA0:            /* ana b */
-            cpu_cycles = 4;
-            ANA(B);
-            break;
-
-        case 0xA1:            /* ana c */
-            cpu_cycles = 4;
-            ANA(C);
-            break;
-
-        case 0xA2:            /* ana d */
-            cpu_cycles = 4;
-            ANA(D);
-            break;
-
-        case 0xA3:            /* ana e */
-            cpu_cycles = 4;
-            ANA(E);
-            break;
-
-        case 0xA4:            /* ana h */
-            cpu_cycles = 4;
-            ANA(H);
-            break;
-
-        case 0xA5:            /* ana l */
-            cpu_cycles = 4;
-            ANA(L);
-            break;
-
         case 0xA6:            /* ana m */
             cpu_cycles = 7;
             work8 = RD_BYTE(HL);
             ANA(work8);
-            break;
-
-        case 0xA7:            /* ana a */
-            cpu_cycles = 4;
-            ANA(A);
-            break;
-
-        case 0xA8:            /* xra b */
-            cpu_cycles = 4;
-            XRA(B);
-            break;
-
-        case 0xA9:            /* xra c */
-            cpu_cycles = 4;
-            XRA(C);
-            break;
-
-        case 0xAA:            /* xra d */
-            cpu_cycles = 4;
-            XRA(D);
-            break;
-
-        case 0xAB:            /* xra e */
-            cpu_cycles = 4;
-            XRA(E);
-            break;
-
-        case 0xAC:            /* xra h */
-            cpu_cycles = 4;
-            XRA(H);
-            break;
-
-        case 0xAD:            /* xra l */
-            cpu_cycles = 4;
-            XRA(L);
             break;
 
         case 0xAE:            /* xra m */
@@ -891,91 +686,16 @@ static int i8080_execute(int opcode) {
             XRA(work8);
             break;
 
-        case 0xAF:            /* xra a */
-            cpu_cycles = 4;
-            XRA(A);
-            break;
-
-        case 0xB0:            /* ora b */
-            cpu_cycles = 4;
-            ORA(B);
-            break;
-
-        case 0xB1:            /* ora c */
-            cpu_cycles = 4;
-            ORA(C);
-            break;
-
-        case 0xB2:            /* ora d */
-            cpu_cycles = 4;
-            ORA(D);
-            break;
-
-        case 0xB3:            /* ora e */
-            cpu_cycles = 4;
-            ORA(E);
-            break;
-
-        case 0xB4:            /* ora h */
-            cpu_cycles = 4;
-            ORA(H);
-            break;
-
-        case 0xB5:            /* ora l */
-            cpu_cycles = 4;
-            ORA(L);
-            break;
-
         case 0xB6:            /* ora m */
             cpu_cycles = 7;
             work8 = RD_BYTE(HL);
             ORA(work8);
             break;
 
-        case 0xB7:            /* ora a */
-            cpu_cycles = 4;
-            ORA(A);
-            break;
-
-        case 0xB8:            /* cmp b */
-            cpu_cycles = 4;
-            CMP(B);
-            break;
-
-        case 0xB9:            /* cmp c */
-            cpu_cycles = 4;
-            CMP(C);
-            break;
-
-        case 0xBA:            /* cmp d */
-            cpu_cycles = 4;
-            CMP(D);
-            break;
-
-        case 0xBB:            /* cmp e */
-            cpu_cycles = 4;
-            CMP(E);
-            break;
-
-        case 0xBC:            /* cmp h */
-            cpu_cycles = 4;
-            CMP(H);
-            break;
-
-        case 0xBD:            /* cmp l */
-            cpu_cycles = 4;
-            CMP(L);
-            break;
-
         case 0xBE:            /* cmp m */
             cpu_cycles = 7;
             work8 = RD_BYTE(HL);
             CMP(work8);
-            break;
-
-        case 0xBF:            /* cmp a */
-            cpu_cycles = 4;
-            CMP(A);
             break;
 
         case 0xC0:            /* rnz */
@@ -1398,7 +1118,20 @@ static int i8080_execute(int opcode) {
         return cpu_cycles;
     }
 
-    if ((opcode & 0b11000000) == 0b01000000) { // mov d,s - Move register to register
+    // cmp,ora,xra,ana,sbb,sub,adc,add
+    switch (opcode & 0b11111000) {
+        case 0b10111000: CMP(*REG[SOURCE(opcode)]); return 4; // cmp s  ZSPCA   Compare register with A
+        case 0b10110000: ORA(*REG[SOURCE(opcode)]); return 4; // ora s  ZSPCA   OR  register with A
+        case 0b10101000: XRA(*REG[SOURCE(opcode)]); return 4; // xra s  ZSPCA   ExclusiveOR register with A
+        case 0b10100000: ANA(*REG[SOURCE(opcode)]); return 4; // ana s  ZSCPA   AND register with A
+        case 0b10011000: SBB(*REG[SOURCE(opcode)]); return 4; // sbb s  ZSCPA   Subtract register from A with borrow
+        case 0b10010000: SUB(*REG[SOURCE(opcode)]); return 4; // sub s  ZSCPA   Subtract register from A
+        case 0b10001000: ADC(*REG[SOURCE(opcode)]); return 4; // adc s  ZSCPA   Add register to A with carry
+        case 0b10000000: ADD(*REG[SOURCE(opcode)]); return 4; // add s  ZSPCA   Add register to A
+    }
+
+    // mov d,s - Move register to register
+    if ((opcode & 0b11000000) == 0b01000000) { 
         if (DEST(opcode)==6) WR_BYTE(HL,*REG[SOURCE(opcode)]);
         else if (SOURCE(opcode)==6) *REG[DEST(opcode)] = RD_BYTE(HL);
         else *REG[DEST(opcode)] = *REG[SOURCE(opcode)]; 
