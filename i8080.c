@@ -2,6 +2,8 @@
 //
 // Copyright (C) 2012 Alexander Demin <alexander@demin.ws>
 //
+// Optimized for Arduino by reducing memory usage by Rick Companje (2016)
+//
 // Credits
 //
 // Viacheslav Slavinsky, Vector-06C FPGA Replica
