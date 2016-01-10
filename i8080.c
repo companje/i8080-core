@@ -278,6 +278,16 @@ int i8080_getParity(int val) {
 int half_carry_table[] = { 0, 0, 1, 0, 1, 0, 1, 1 };
 int sub_half_carry_table[] = { 0, 1, 1, 1, 0, 0, 0, 1 };
 
+#define DEST(x) (x >> 3 & 7)
+#define SOURCE(x) (x & 7)
+#define CONDITION(x) (x >> 3 & 7)
+#define VECTOR(x) (x >> 3 & 7)
+#define RP(x) (x >> 4 & 3)
+
+uns8 M;
+uns8* REG[] = { &B, &C, &D, &E, &H, &L, &M, &A };
+uns16* PAIR[] = { &BC, &DE, &HL, &SP };
+
 void i8080_init(void) {
     C_FLAG = 0;
     S_FLAG = 0;
@@ -311,7 +321,8 @@ static void i8080_retrieve_flags(void) {
 }
 
 static int i8080_execute(int opcode) {
-    int cpu_cycles;
+    int cpu_cycles = 0;
+    
     switch (opcode) {
         case 0x00:            /* nop */
         // Undocumented NOP.
@@ -634,317 +645,9 @@ static int i8080_execute(int opcode) {
             CPL(C_FLAG);
             break;
 
-        case 0x40:            /* mov b, b */
-            cpu_cycles = 4;
-            break;
-
-        case 0x41:            /* mov b, c */
-            cpu_cycles = 5;
-            B = C;
-            break;
-
-        case 0x42:            /* mov b, d */
-            cpu_cycles = 5;
-            B = D;
-            break;
-
-        case 0x43:            /* mov b, e */
-            cpu_cycles = 5;
-            B = E;
-            break;
-
-        case 0x44:            /* mov b, h */
-            cpu_cycles = 5;
-            B = H;
-            break;
-
-        case 0x45:            /* mov b, l */
-            cpu_cycles = 5;
-            B = L;
-            break;
-
-        case 0x46:            /* mov b, m */
-            cpu_cycles = 7;
-            B = RD_BYTE(HL);
-            break;
-
-        case 0x47:            /* mov b, a */
-            cpu_cycles = 5;
-            B = A;
-            break;
-
-        case 0x48:            /* mov c, b */
-            cpu_cycles = 5;
-            C = B;
-            break;
-
-        case 0x49:            /* mov c, c */
-            cpu_cycles = 5;
-            break;
-
-        case 0x4A:            /* mov c, d */
-            cpu_cycles = 5;
-            C = D;
-            break;
-
-        case 0x4B:            /* mov c, e */
-            cpu_cycles = 5;
-            C = E;
-            break;
-
-        case 0x4C:            /* mov c, h */
-            cpu_cycles = 5;
-            C = H;
-            break;
-
-        case 0x4D:            /* mov c, l */
-            cpu_cycles = 5;
-            C = L;
-            break;
-
-        case 0x4E:            /* mov c, m */
-            cpu_cycles = 7;
-            C = RD_BYTE(HL);
-            break;
-
-        case 0x4F:            /* mov c, a */
-            cpu_cycles = 5;
-            C = A;
-            break;
-
-        case 0x50:            /* mov d, b */
-            cpu_cycles = 5;
-            D = B;
-            break;
-
-        case 0x51:            /* mov d, c */
-            cpu_cycles = 5;
-            D = C;
-            break;
-
-        case 0x52:            /* mov d, d */
-            cpu_cycles = 5;
-            break;
-
-        case 0x53:            /* mov d, e */
-            cpu_cycles = 5;
-            D = E;
-            break;
-
-        case 0x54:            /* mov d, h */
-            cpu_cycles = 5;
-            D = H;
-            break;
-
-        case 0x55:            /* mov d, l */
-            cpu_cycles = 5;
-            D = L;
-            break;
-
-        case 0x56:            /* mov d, m */
-            cpu_cycles = 7;
-            D = RD_BYTE(HL);
-            break;
-
-        case 0x57:            /* mov d, a */
-            cpu_cycles = 5;
-            D = A;
-            break;
-
-        case 0x58:            /* mov e, b */
-            cpu_cycles = 5;
-            E = B;
-            break;
-
-        case 0x59:            /* mov e, c */
-            cpu_cycles = 5;
-            E = C;
-            break;
-
-        case 0x5A:            /* mov e, d */
-            cpu_cycles = 5;
-            E = D;
-            break;
-
-        case 0x5B:            /* mov e, e */
-            cpu_cycles = 5;
-            break;
-
-        case 0x5C:            /* mov c, h */
-            cpu_cycles = 5;
-            E = H;
-            break;
-
-        case 0x5D:            /* mov c, l */
-            cpu_cycles = 5;
-            E = L;
-            break;
-
-        case 0x5E:            /* mov c, m */
-            cpu_cycles = 7;
-            E = RD_BYTE(HL);
-            break;
-
-        case 0x5F:            /* mov c, a */
-            cpu_cycles = 5;
-            E = A;
-            break;
-
-        case 0x60:            /* mov h, b */
-            cpu_cycles = 5;
-            H = B;
-            break;
-
-        case 0x61:            /* mov h, c */
-            cpu_cycles = 5;
-            H = C;
-            break;
-
-        case 0x62:            /* mov h, d */
-            cpu_cycles = 5;
-            H = D;
-            break;
-
-        case 0x63:            /* mov h, e */
-            cpu_cycles = 5;
-            H = E;
-            break;
-
-        case 0x64:            /* mov h, h */
-            cpu_cycles = 5;
-            break;
-
-        case 0x65:            /* mov h, l */
-            cpu_cycles = 5;
-            H = L;
-            break;
-
-        case 0x66:            /* mov h, m */
-            cpu_cycles = 7;
-            H = RD_BYTE(HL);
-            break;
-
-        case 0x67:            /* mov h, a */
-            cpu_cycles = 5;
-            H = A;
-            break;
-
-        case 0x68:            /* mov l, b */
-            cpu_cycles = 5;
-            L = B;
-            break;
-
-        case 0x69:            /* mov l, c */
-            cpu_cycles = 5;
-            L = C;
-            break;
-
-        case 0x6A:            /* mov l, d */
-            cpu_cycles = 5;
-            L = D;
-            break;
-
-        case 0x6B:            /* mov l, e */
-            cpu_cycles = 5;
-            L = E;
-            break;
-
-        case 0x6C:            /* mov l, h */
-            cpu_cycles = 5;
-            L = H;
-            break;
-
-        case 0x6D:            /* mov l, l */
-            cpu_cycles = 5;
-            break;
-
-        case 0x6E:            /* mov l, m */
-            cpu_cycles = 7;
-            L = RD_BYTE(HL);
-            break;
-
-        case 0x6F:            /* mov l, a */
-            cpu_cycles = 5;
-            L = A;
-            break;
-
-        case 0x70:            /* mov m, b */
-            cpu_cycles = 7;
-            WR_BYTE(HL, B);
-            break;
-
-        case 0x71:            /* mov m, c */
-            cpu_cycles = 7;
-            WR_BYTE(HL, C);
-            break;
-
-        case 0x72:            /* mov m, d */
-            cpu_cycles = 7;
-            WR_BYTE(HL, D);
-            break;
-
-        case 0x73:            /* mov m, e */
-            cpu_cycles = 7;
-            WR_BYTE(HL, E);
-            break;
-
-        case 0x74:            /* mov m, h */
-            cpu_cycles = 7;
-            WR_BYTE(HL, H);
-            break;
-
-        case 0x75:            /* mov m, l */
-            cpu_cycles = 7;
-            WR_BYTE(HL, L);
-            break;
-
         case 0x76:            /* hlt */
             cpu_cycles = 4;
             PC--;
-            break;
-
-        case 0x77:            /* mov m, a */
-            cpu_cycles = 7;
-            WR_BYTE(HL, A);
-            break;
-
-        case 0x78:            /* mov a, b */
-            cpu_cycles = 5;
-            A = B;
-            break;
-
-        case 0x79:            /* mov a, c */
-            cpu_cycles = 5;
-            A = C;
-            break;
-
-        case 0x7A:            /* mov a, d */
-            cpu_cycles = 5;
-            A = D;
-            break;
-
-        case 0x7B:            /* mov a, e */
-            cpu_cycles = 5;
-            A = E;
-            break;
-
-        case 0x7C:            /* mov a, h */
-            cpu_cycles = 5;
-            A = H;
-            break;
-
-        case 0x7D:            /* mov a, l */
-            cpu_cycles = 5;
-            A = L;
-            break;
-
-        case 0x7E:            /* mov a, m */
-            cpu_cycles = 7;
-            A = RD_BYTE(HL);
-            break;
-
-        case 0x7F:            /* mov a, a */
-            cpu_cycles = 5;
             break;
 
         case 0x80:            /* add b */
@@ -1689,11 +1392,20 @@ static int i8080_execute(int opcode) {
             RST(0x0038);
             break;
 
-        default:
-            cpu_cycles = -1;  /* Shouldn't be really here. */
-            break;
     }
-    return cpu_cycles;
+
+    if (cpu_cycles!=0) {
+        return cpu_cycles;
+    }
+
+    if ((opcode & 0b11000000) == 0b01000000) { // mov d,s - Move register to register
+        if (DEST(opcode)==6) WR_BYTE(HL,*REG[SOURCE(opcode)]);
+        else if (SOURCE(opcode)==6) *REG[DEST(opcode)] = RD_BYTE(HL);
+        else *REG[DEST(opcode)] = *REG[SOURCE(opcode)]; 
+        return 5;
+    }
+
+    return -1;
 }
 
 int i8080_instruction(void) {
