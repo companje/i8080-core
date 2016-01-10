@@ -320,6 +320,20 @@ static void i8080_retrieve_flags(void) {
     C_FLAG = F & F_CARRY    ? 1 : 0;
 }
 
+static uns8 i8080_checkCondition(uns8 c) {
+  switch (c) {
+    case 0: return !Z_FLAG;
+    case 1: return Z_FLAG;
+    case 2: return !C_FLAG;
+    case 3: return C_FLAG;
+    case 4: return !P_FLAG;
+    case 5: return P_FLAG;
+    case 6: return !S_FLAG;
+    case 7: return S_FLAG;
+  }
+  return 0;
+}
+
 static int i8080_execute(int opcode) {
     int cpu_cycles = 0;
 
@@ -698,43 +712,15 @@ static int i8080_execute(int opcode) {
             CMP(work8);
             break;
 
-        case 0xC0:            /* rnz */
-            cpu_cycles = 5;
-            if (!TST(Z_FLAG)) {
-                cpu_cycles = 11;
-                POP(PC);
-            }
-            break;
-
         case 0xC1:            /* pop b */
             cpu_cycles = 11;
             POP(BC);
-            break;
-
-        case 0xC2:            /* jnz addr */
-            cpu_cycles = 10;
-            if (!TST(Z_FLAG)) {
-                PC = RD_WORD(PC);
-            }
-            else {
-                PC += 2;
-            }
             break;
 
         case 0xC3:            /* jmp addr */
         case 0xCB:            /* jmp addr, undocumented */
             cpu_cycles = 10;
             PC = RD_WORD(PC);
-            break;
-
-        case 0xC4:            /* cnz addr */
-            if (!TST(Z_FLAG)) {
-                cpu_cycles = 17;
-                CALL;
-            } else {
-                cpu_cycles = 11;
-                PC += 2;
-            }
             break;
 
         case 0xC5:            /* push b */
@@ -748,42 +734,10 @@ static int i8080_execute(int opcode) {
             ADD(work8);
             break;
 
-        case 0xC7:            /* rst 0 */
-            cpu_cycles = 11;
-            RST(0x0000);
-            break;
-
-        case 0xC8:            /* rz */
-            cpu_cycles = 5;
-            if (TST(Z_FLAG)) {
-                cpu_cycles = 11;
-                POP(PC);
-            }
-            break;
-
         case 0xC9:            /* ret */
         case 0xD9:            /* ret, undocumented */
             cpu_cycles = 10;
             POP(PC);
-            break;
-
-        case 0xCA:            /* jz addr */
-            cpu_cycles = 10;
-            if (TST(Z_FLAG)) {
-                PC = RD_WORD(PC);
-            } else {
-                PC += 2;
-            }
-            break;
-
-        case 0xCC:            /* cz addr */
-            if (TST(Z_FLAG)) {
-                cpu_cycles = 17;
-                CALL;
-            } else {
-                cpu_cycles = 11;
-                PC += 2;
-            }
             break;
 
         case 0xCD:            /* call addr */
@@ -800,46 +754,14 @@ static int i8080_execute(int opcode) {
             ADC(work8);
             break;
 
-        case 0xCF:            /* rst 1 */
-            cpu_cycles = 11;
-            RST(0x0008);
-            break;
-
-        case 0xD0:            /* rnc */
-            cpu_cycles = 5;
-            if (!TST(C_FLAG)) {
-                cpu_cycles = 11;
-                POP(PC);
-            }
-            break;
-
         case 0xD1:            /* pop d */
             cpu_cycles = 11;
             POP(DE);
             break;
 
-        case 0xD2:            /* jnc addr */
-            cpu_cycles = 10;
-            if (!TST(C_FLAG)) {
-                PC = RD_WORD(PC);
-            } else {
-                PC += 2;
-            }
-            break;
-
         case 0xD3:            /* out port8 */
             cpu_cycles = 10;
             i8080_hal_io_output(RD_BYTE(PC++), A);
-            break;
-
-        case 0xD4:            /* cnc addr */
-            if (!TST(C_FLAG)) {
-                cpu_cycles = 17;
-                CALL;
-            } else {
-                cpu_cycles = 11;
-                PC += 2;
-            }
             break;
 
         case 0xD5:            /* push d */
@@ -853,41 +775,9 @@ static int i8080_execute(int opcode) {
             SUB(work8);
             break;
 
-        case 0xD7:            /* rst 2 */
-            cpu_cycles = 11;
-            RST(0x0010);
-            break;
-
-        case 0xD8:            /* rc */
-            cpu_cycles = 5;
-            if (TST(C_FLAG)) {
-                cpu_cycles = 11;
-                POP(PC);
-            }
-            break;
-
-        case 0xDA:            /* jc addr */
-            cpu_cycles = 10;
-            if (TST(C_FLAG)) {
-                PC = RD_WORD(PC);
-            } else {
-                PC += 2;
-            }
-            break;
-
         case 0xDB:            /* in port8 */
             cpu_cycles = 10;
             A = i8080_hal_io_input(RD_BYTE(PC++));
-            break;
-
-        case 0xDC:            /* cc addr */
-            if (TST(C_FLAG)) {
-                cpu_cycles = 17;
-                CALL;
-            } else {
-                cpu_cycles = 11;
-                PC += 2;
-            }
             break;
 
         case 0xDE:            /* sbi data8 */
@@ -896,32 +786,9 @@ static int i8080_execute(int opcode) {
             SBB(work8);
             break;
 
-        case 0xDF:            /* rst 3 */
-            cpu_cycles = 11;
-            RST(0x0018);
-            break;
-
-        case 0xE0:            /* rpo */
-            cpu_cycles = 5;
-            if (!TST(P_FLAG)) {
-                cpu_cycles = 11;
-                POP(PC);
-            }
-            break;
-
         case 0xE1:            /* pop h */
             cpu_cycles = 11;
             POP(HL);
-            break;
-
-        case 0xE2:            /* jpo addr */
-            cpu_cycles = 10;
-            if (!TST(P_FLAG)) {
-                PC = RD_WORD(PC);
-            }
-            else {
-                PC += 2;
-            }
             break;
 
         case 0xE3:            /* xthl */
@@ -929,16 +796,6 @@ static int i8080_execute(int opcode) {
             work16 = RD_WORD(SP);
             WR_WORD(SP, HL);
             HL = work16;
-            break;
-
-        case 0xE4:            /* cpo addr */
-            if (!TST(P_FLAG)) {
-                cpu_cycles = 17;
-                CALL;
-            } else {
-                cpu_cycles = 11;
-                PC += 2;
-            }
             break;
 
         case 0xE5:            /* push h */
@@ -952,31 +809,9 @@ static int i8080_execute(int opcode) {
             ANA(work8);
             break;
 
-        case 0xE7:            /* rst 4 */
-            cpu_cycles = 11;
-            RST(0x0020);
-            break;
-
-        case 0xE8:            /* rpe */
-            cpu_cycles = 5;
-            if (TST(P_FLAG)) {
-                cpu_cycles = 11;
-                POP(PC);
-            }
-            break;
-
         case 0xE9:            /* pchl */
             cpu_cycles = 5;
             PC = HL;
-            break;
-
-        case 0xEA:            /* jpe addr */
-            cpu_cycles = 10;
-            if (TST(P_FLAG)) {
-                PC = RD_WORD(PC);
-            } else {
-                PC += 2;
-            }
             break;
 
         case 0xEB:            /* xchg */
@@ -986,33 +821,10 @@ static int i8080_execute(int opcode) {
             HL = work16;
             break;
 
-        case 0xEC:            /* cpe addr */
-            if (TST(P_FLAG)) {
-                cpu_cycles = 17;
-                CALL;
-            } else {
-                cpu_cycles = 11;
-                PC += 2;
-            }
-            break;
-
         case 0xEE:            /* xri data8 */
             cpu_cycles = 7;
             work8 = RD_BYTE(PC++);
             XRA(work8);
-            break;
-
-        case 0xEF:            /* rst 5 */
-            cpu_cycles = 11;
-            RST(0x0028);
-            break;
-
-        case 0xF0:            /* rp */
-            cpu_cycles = 5;
-            if (!TST(S_FLAG)) {
-                cpu_cycles = 11;
-                POP(PC);
-            }
             break;
 
         case 0xF1:            /* pop psw */
@@ -1021,29 +833,10 @@ static int i8080_execute(int opcode) {
             i8080_retrieve_flags();
             break;
 
-        case 0xF2:            /* jp addr */
-            cpu_cycles = 10;
-            if (!TST(S_FLAG)) {
-                PC = RD_WORD(PC);
-            } else {
-                PC += 2;
-            }
-            break;
-
         case 0xF3:            /* di */
             cpu_cycles = 4;
             IFF = 0;
             i8080_hal_iff(IFF);
-            break;
-
-        case 0xF4:            /* cp addr */
-            if (!TST(S_FLAG)) {
-                cpu_cycles = 17;
-                CALL;
-            } else {
-                cpu_cycles = 11;
-                PC += 2;
-            }
             break;
 
         case 0xF5:            /* push psw */
@@ -1058,31 +851,9 @@ static int i8080_execute(int opcode) {
             ORA(work8);
             break;
 
-        case 0xF7:            /* rst 6 */
-            cpu_cycles = 11;
-            RST(0x0030);
-            break;
-
-        case 0xF8:            /* rm */
-            cpu_cycles = 5;
-            if (TST(S_FLAG)) {
-                cpu_cycles = 11;
-                POP(PC);
-            }
-            break;
-
         case 0xF9:            /* sphl */
             cpu_cycles = 5;
             SP = HL;
-            break;
-
-        case 0xFA:            /* jm addr */
-            cpu_cycles = 10;
-            if (TST(S_FLAG)) {
-                PC = RD_WORD(PC);
-            } else {
-                PC += 2;
-            }
             break;
 
         case 0xFB:            /* ei */
@@ -1091,25 +862,10 @@ static int i8080_execute(int opcode) {
             i8080_hal_iff(IFF);
             break;
 
-        case 0xFC:            /* cm addr */
-            if (TST(S_FLAG)) {
-                cpu_cycles = 17;
-                CALL;
-            } else {
-                cpu_cycles = 11;
-                PC += 2;
-            }
-            break;
-
         case 0xFE:            /* cpi data8 */
             cpu_cycles = 7;
             work8 = RD_BYTE(PC++);
             CMP(work8);
-            break;
-
-        case 0xFF:            /* rst 7 */
-            cpu_cycles = 11;
-            RST(0x0038);
             break;
 
     }
@@ -1128,6 +884,17 @@ static int i8080_execute(int opcode) {
         case 0b10010000: SUB(*REG[SOURCE(opcode)]); return 4; // sub s  ZSCPA   Subtract register from A
         case 0b10001000: ADC(*REG[SOURCE(opcode)]); return 4; // adc s  ZSCPA   Add register to A with carry
         case 0b10000000: ADD(*REG[SOURCE(opcode)]); return 4; // add s  ZSPCA   Add register to A
+    }
+
+    // rst,cccc,jccc,rccc,mvi,dcr,inr
+    switch (opcode & 0b11000111) {
+        case 0b11000111: RST(DEST(opcode)*8); return 11; // rst n - Restart (n*8)
+        case 0b11000100: if (i8080_checkCondition(CONDITION(opcode))) { CALL return 17; } else { PC+=2; return 11; } // cccc a    lb hb    -       Conditional subroutine call
+        case 0b11000010: if (i8080_checkCondition(CONDITION(opcode))) PC = RD_WORD(PC); else PC+=2; return 10; // jccc a    lb hb    -       Conditional jump
+        case 0b11000000: if (i8080_checkCondition(CONDITION(opcode))) { POP(PC); return 11; } else return 5; // rccc -       Conditional return 0 from subroutine
+        case 0b00000110: *REG[DEST(opcode)] = RD_BYTE(PC++); return 7; // mvi d,#   db - Move immediate to register
+        case 0b00000101: DCR(*REG[DEST(opcode)]); return 5; // dcr d   ZSPA    Decrement register
+        case 0b00000100: INR(*REG[DEST(opcode)]); return 5; // inr d   ZSPA    Increment register
     }
 
     // mov d,s - Move register to register
