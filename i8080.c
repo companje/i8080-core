@@ -350,108 +350,16 @@ static int i8080_execute(int opcode) {
             cpu_cycles = 4;
             break;
 
-        case 0x01:            /* lxi b, data16 */
-            cpu_cycles = 10;
-            BC = RD_WORD(PC);
-            PC += 2;
-            break;
-
-        case 0x02:            /* stax b */
-            cpu_cycles = 7;
-            WR_BYTE(BC, A);
-            break;
-
-        case 0x03:            /* inx b */
-            cpu_cycles = 5;
-            BC++;
-            break;
-
-        case 0x04:            /* inr b */
-            cpu_cycles = 5;
-            INR(B);
-            break;
-
-        case 0x05:            /* dcr b */
-            cpu_cycles = 5;
-            DCR(B);
-            break;
-
-        case 0x06:            /* mvi b, data8 */
-            cpu_cycles = 7;
-            B = RD_BYTE(PC++);
-            break;
-
         case 0x07:            /* rlc */
             cpu_cycles = 4;
             C_FLAG = ((A & 0x80) != 0);
             A = (A << 1) | C_FLAG;
             break;
 
-        case 0x09:            /* dad b */
-            cpu_cycles = 10;
-            DAD(BC);
-            break;
-
-        case 0x0A:            /* ldax b */
-            cpu_cycles = 7;
-            A = RD_BYTE(BC);
-            break;
-
-        case 0x0B:            /* dcx b */
-            cpu_cycles = 5;
-            BC--;
-            break;
-
-        case 0x0C:            /* inr c */
-            cpu_cycles = 5;
-            INR(C);
-            break;
-
-        case 0x0D:            /* dcr c */
-            cpu_cycles = 5;
-            DCR(C);
-            break;
-
-        case 0x0E:            /* mvi c, data8 */
-            cpu_cycles = 7;
-            C = RD_BYTE(PC++);
-            break;
-
         case 0x0F:            /* rrc */
             cpu_cycles = 4;
             C_FLAG = A & 0x01;
             A = (A >> 1) | (C_FLAG << 7);
-            break;
-
-        case 0x11:            /* lxi d, data16 */
-            cpu_cycles = 10;
-            DE = RD_WORD(PC);
-            PC += 2;
-            break;
-
-        case 0x12:            /* stax d */
-            cpu_cycles = 7;
-            WR_BYTE(DE, A);
-            break;
-
-        case 0x13:            /* inx d */
-            cpu_cycles = 5;
-            DE++;
-            break;
-
-        case 0x14:            /* inr d */
-            cpu_cycles = 5;
-            INR(D);
-            break;
-
-        case 0x15:            /* dcr d */
-            cpu_cycles = 5;
-            DCR(D);
-            break;
-
-        case 0x16:            /* mvi d, data8 */
-            cpu_cycles = 7;
-            D = RD_BYTE(PC++);
             break;
 
         case 0x17:            /* ral */
@@ -461,36 +369,6 @@ static int i8080_execute(int opcode) {
             A = (A << 1) | work8;
             break;
 
-        case 0x19:            /* dad d */
-            cpu_cycles = 10;
-            DAD(DE);
-            break;
-
-        case 0x1A:            /* ldax d */
-            cpu_cycles = 7;
-            A = RD_BYTE(DE);
-            break;
-
-        case 0x1B:            /* dcx d */
-            cpu_cycles = 5;
-            DE--;
-            break;
-
-        case 0x1C:            /* inr e */
-            cpu_cycles = 5;
-            INR(E);
-            break;
-
-        case 0x1D:            /* dcr e */
-            cpu_cycles = 5;
-            DCR(E);
-            break;
-
-        case 0x1E:            /* mvi e, data8 */
-            cpu_cycles = 7;
-            E = RD_BYTE(PC++);
-            break;
-
         case 0x1F:             /* rar */
             cpu_cycles = 4;
             work8 = (uns8)C_FLAG;
@@ -498,36 +376,10 @@ static int i8080_execute(int opcode) {
             A = (A >> 1) | (work8 << 7);
             break;
 
-        case 0x21:             /* lxi h, data16 */
-            cpu_cycles = 10;
-            HL = RD_WORD(PC);
-            PC += 2;
-            break;
-
         case 0x22:            /* shld addr */
             cpu_cycles = 16;
             WR_WORD(RD_WORD(PC), HL);
             PC += 2;
-            break;
-
-        case 0x23:            /* inx h */
-            cpu_cycles = 5;
-            HL++;
-            break;
-
-        case 0x24:            /* inr h */
-            cpu_cycles = 5;
-            INR(H);
-            break;
-
-        case 0x25:            /* dcr h */
-            cpu_cycles = 5;
-            DCR(H);
-            break;
-
-        case 0x26:            /* mvi h, data8 */
-            cpu_cycles = 7;
-            H = RD_BYTE(PC++);
             break;
 
         case 0x27:            /* daa */
@@ -546,35 +398,10 @@ static int i8080_execute(int opcode) {
             C_FLAG = carry;
             break;
 
-        case 0x29:            /* dad hl */
-            cpu_cycles = 10;
-            DAD(HL);
-            break;
-
         case 0x2A:            /* ldhl addr */
             cpu_cycles = 16;
             HL = RD_WORD(RD_WORD(PC));
             PC += 2;
-            break;
-
-        case 0x2B:            /* dcx h */
-            cpu_cycles = 5;
-            HL--;
-            break;
-
-        case 0x2C:            /* inr l */
-            cpu_cycles = 5;
-            INR(L);
-            break;
-
-        case 0x2D:            /* dcr l */
-            cpu_cycles = 5;
-            DCR(L);
-            break;
-
-        case 0x2E:            /* mvi l, data8 */
-            cpu_cycles = 7;
-            L = RD_BYTE(PC++);
             break;
 
         case 0x2F:            /* cma */
@@ -582,21 +409,10 @@ static int i8080_execute(int opcode) {
             A ^= 0xff;
             break;
 
-        case 0x31:            /* lxi sp, data16 */
-            cpu_cycles = 10;
-            SP = RD_WORD(PC);
-            PC += 2;
-            break;
-
         case 0x32:            /* sta addr */
             cpu_cycles = 13;
             WR_BYTE(RD_WORD(PC), A);
             PC += 2;
-            break;
-
-        case 0x33:            /* inx sp */
-            cpu_cycles = 5;
-            SP++;
             break;
 
         case 0x34:            /* inr m */
@@ -623,35 +439,10 @@ static int i8080_execute(int opcode) {
             SET(C_FLAG);
             break;
 
-        case 0x39:            /* dad sp */
-            cpu_cycles = 10;
-            DAD(SP);
-            break;
-
         case 0x3A:            /* lda addr */
             cpu_cycles = 13;
             A = RD_BYTE(RD_WORD(PC));
             PC += 2;
-            break;
-
-        case 0x3B:            /* dcx sp */
-            cpu_cycles = 5;
-            SP--;
-            break;
-
-        case 0x3C:            /* inr a */
-            cpu_cycles = 5;
-            INR(A);
-            break;
-
-        case 0x3D:            /* dcr a */
-            cpu_cycles = 5;
-            DCR(A);
-            break;
-
-        case 0x3E:            /* mvi a, data8 */
-            cpu_cycles = 7;
-            A = RD_BYTE(PC++);
             break;
 
         case 0x3F:            /* cmc */
@@ -712,20 +503,10 @@ static int i8080_execute(int opcode) {
             CMP(work8);
             break;
 
-        case 0xC1:            /* pop b */
-            cpu_cycles = 11;
-            POP(BC);
-            break;
-
         case 0xC3:            /* jmp addr */
         case 0xCB:            /* jmp addr, undocumented */
             cpu_cycles = 10;
             PC = RD_WORD(PC);
-            break;
-
-        case 0xC5:            /* push b */
-            cpu_cycles = 11;
-            PUSH(BC);
             break;
 
         case 0xC6:            /* adi data8 */
@@ -754,19 +535,9 @@ static int i8080_execute(int opcode) {
             ADC(work8);
             break;
 
-        case 0xD1:            /* pop d */
-            cpu_cycles = 11;
-            POP(DE);
-            break;
-
         case 0xD3:            /* out port8 */
             cpu_cycles = 10;
             i8080_hal_io_output(RD_BYTE(PC++), A);
-            break;
-
-        case 0xD5:            /* push d */
-            cpu_cycles = 11;
-            PUSH(DE);
             break;
 
         case 0xD6:            /* sui data8 */
@@ -786,21 +557,11 @@ static int i8080_execute(int opcode) {
             SBB(work8);
             break;
 
-        case 0xE1:            /* pop h */
-            cpu_cycles = 11;
-            POP(HL);
-            break;
-
         case 0xE3:            /* xthl */
             cpu_cycles = 18;
             work16 = RD_WORD(SP);
             WR_WORD(SP, HL);
             HL = work16;
-            break;
-
-        case 0xE5:            /* push h */
-            cpu_cycles = 11;
-            PUSH(HL);
             break;
 
         case 0xE6:            /* ani data8 */
@@ -895,6 +656,18 @@ static int i8080_execute(int opcode) {
         case 0b00000110: *REG[DEST(opcode)] = RD_BYTE(PC++); return 7; // mvi d,#   db - Move immediate to register
         case 0b00000101: DCR(*REG[DEST(opcode)]); return 5; // dcr d   ZSPA    Decrement register
         case 0b00000100: INR(*REG[DEST(opcode)]); return 5; // inr d   ZSPA    Increment register
+    }
+
+    // push,pop,dcx,ldax,dad,inx,stax,lxi
+    switch (opcode & 0b11001111) {
+        case 0b11000101: PUSH(*PAIR[RP(opcode)]); return 11; // push rp   *2       -       Push register pair on the stack
+        case 0b11000001: POP(*PAIR[RP(opcode)]); return 11; // pop rp    *2       *2      Pop  register pair from the stack
+        case 0b00001011: (*PAIR[RP(opcode)])--; return 5; // dcx rp -       Decrement register pair
+        case 0b00001010: A = RD_BYTE(*PAIR[RP(opcode)]); return 7; // ldax rp   *1       -       Load indirect through BC or DE
+        case 0b00001001: DAD(*PAIR[RP(opcode)]); return 10; // dad rp             C       Add register pair to HL (16 bit add)
+        case 0b00000011: (*PAIR[RP(opcode)])++; return 5; // inx rp             -       Increment register pair
+        case 0b00000010: WR_BYTE(*PAIR[RP(opcode)],A); return 7; // stax rp   *1       -       Store indirect through BC or DE
+        case 0b00000001: *PAIR[RP(opcode)] = RD_WORD(PC); PC+=2; return 10; // lxi rp,#  lb hb    -       Load register pair immediate
     }
 
     // mov d,s - Move register to register
